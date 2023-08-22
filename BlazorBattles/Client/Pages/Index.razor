@@ -1,0 +1,19 @@
+﻿@page "/"
+
+<PageTitle>Battles</PageTitle>
+
+<AuthorizeView>
+    <Authorized>
+        <div class="image">
+            <h1 class="text-center text-white">Hi, @context.User.Identity.Name. Welcome Back!</h1>
+            <img src="images/sword-790815_1280.jpg" width="1100" height="600"/>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <BlazorBattles.Client.Pages.Auth.Login></BlazorBattles.Client.Pages.Auth.Login>
+    </NotAuthorized>
+</AuthorizeView>
+
+
+
+

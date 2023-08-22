@@ -1,0 +1,57 @@
+﻿@page "/build"
+@using Blazored.Toast.Configuration;
+@inject IBananaService BananaService
+@inject IUnitService UnitService
+@inject IToastService ToastService
+@attribute [Authorize]
+
+<h3>Build</h3>
+
+<div class="row mb-3">
+    <select class="form-select" @bind="selectedUnitId">
+        @foreach (var unit in UnitService.Units)
+
+        {
+            <option value="@unit.Id">@unit.Title // @unit.BananaCost Bananas</option>
+        }
+    </select>
+</div>
+
+<button class="btn btn-primary" @onclick="BuildUnit">Build Unit</button>
+
+@if (needMoreBananas)
+{
+    <div class="validation-message">
+        Not enough bananas! :(
+    </div>
+}
+
+@code {
+    private int selectedUnitId = 1;
+    public bool needMoreBananas = false;
+
+    public void BuildUnit()
+    {
+        var selectedUnit = UnitService.Units.FirstOrDefault(u => u.Id == selectedUnitId);
+        if (selectedUnit != null)
+        {
+            if (BananaService.Bananas < selectedUnit.BananaCost)
+            {
+                needMoreBananas = true;
+                ToastService.ShowError("Not enough bananas!", settings => settings.Position = ToastPosition.TopRight);
+
+                return;
+            }
+            needMoreBananas = false;
+            EatBananas(selectedUnit.BananaCost);
+            UnitService.AddUnit(selectedUnitId);
+        }
+        
+    }
+
+    private void EatBananas(int amount)
+    {
+        // Console.WriteLine($"{amount} bananas eaten.");
+        BananaService.EatBananas(amount);
+    }
+}

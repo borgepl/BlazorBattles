@@ -1,0 +1,107 @@
+﻿@page "/login"
+@inject NavigationManager NavManager
+@inject ILocalStorageService LocalStorage
+@inject AuthenticationStateProvider AuthStateProvider
+
+
+   @* <h3>Login</h3>
+
+    <EditForm Model="userVM" OnValidSubmit="HandleLogin">
+        <DataAnnotationsValidator></DataAnnotationsValidator>
+        <div class="row mb-3">
+            <label for="username">Username</label>
+            <InputText id="username" @bind-Value="userVM.Username" class="form-control"></InputText>
+        </div>
+        <div class="row mb-3">
+            <label for="password">Password</label>
+            <InputText id="password" @bind-Value="userVM.Password" class="form-control" type="password"></InputText>
+        </div>
+        <button type="submit" class="btn btn-primary">Login</button>
+        <ValidationSummary />
+    </EditForm>*@
+
+       <div class="container-fluid">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col-xl-10">
+                    <div class="card rounded-3 text-black">
+                        <div class="row g-0">
+                            <div class="col-lg-6">
+                                <div class="card-body p-md-5 mx-md-4">
+
+                                    <div class="text-center">
+                                        <img src="/icons/knight.png"
+                                             @*style="width: 185px;"*@ alt="logo">
+                                        <h4 class="mt-1 mb-5 pb-1">Welcome To The Blazor Battles</h4>
+                                    </div>
+
+                                    <EditForm Model="userVM" OnValidSubmit="HandleLogin">
+                                    <DataAnnotationsValidator></DataAnnotationsValidator>
+
+                                        <p>Please login to your account</p>
+
+                                        <div class="form-floating mb-4">
+                                            <InputText id="username" @bind-Value="userVM.Username" class="form-control"></InputText>
+                                            <label class="form-label" for="username">Username</label>
+                                        </div>
+
+                                        <div class="form-floating mb-4">
+                                            <InputText id="password" @bind-Value="userVM.Password" class="form-control" type="password"></InputText>
+                                            <label class="form-label" for="password">Password</label>
+                                        </div>
+
+                                        <div class="text-center pt-1 mb-5 pb-1">
+                                            <button class="btn btn-primary w-100 fa-lg gradient-custom-2 mb-3" type="submit">
+                                                Log
+                                                in
+                                            </button>
+                                            <a class="text-muted" href="#!">Forgot password?</a>
+                                        </div>
+
+                                    <ValidationSummary />
+
+                                        <div class="d-flex align-items-center justify-content-center pb-4">
+                                            <p class="mb-0 me-2">Don't have an account?</p>
+                                            <button type="button" @onclick="GoToRegister" class="btn btn-outline-primary">Create new</button>
+                                        </div>
+
+                                    </EditForm>
+
+                                </div>
+                            </div>
+                            <div class="col-lg-6 d-flex align-items-center gradient-custom-2">
+                                <div class="text-white px-3 py-4 p-md-5 mx-md-4">
+                                    <h4 class="mb-4">We are more than just a game</h4>
+                                    <p class="small mb-0">
+                                        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                                        exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+@code {
+    // bool isAuthenticated = false;
+
+    private UserLoginDTO userVM = new UserLoginDTO();
+
+    private async void HandleLogin()
+    {
+        //Console.WriteLine($"{userVM.Username} // {userVM.Password}");
+        //isAuthenticated = true;
+
+        await LocalStorage.SetItemAsync<bool>("IsAuthenticated", true);
+        await AuthStateProvider.GetAuthenticationStateAsync();
+        NavManager.NavigateTo("/");
+    }
+
+    private void GoToRegister()
+    {
+        NavManager.NavigateTo("/register");
+    }
+}
