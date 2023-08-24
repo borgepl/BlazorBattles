@@ -1,8 +1,11 @@
+using BlazorBattles.Server.Extensions;
 using Microsoft.AspNetCore.ResponseCompression;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddMyAppServices(builder.Configuration);
+
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
