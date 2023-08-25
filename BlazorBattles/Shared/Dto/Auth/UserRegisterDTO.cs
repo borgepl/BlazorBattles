@@ -15,7 +15,7 @@ namespace BlazorBattles.Models.Dto.Auth
         [StringLength(16, ErrorMessage = "Your username is too long (16 characters max).")]
         public string Username { get; set; }
 
-        public string Bio { get; set; }
+        public string? Bio { get; set; }
 
         [Required, StringLength(100, MinimumLength = 6)]
         public string Password { get; set; }
