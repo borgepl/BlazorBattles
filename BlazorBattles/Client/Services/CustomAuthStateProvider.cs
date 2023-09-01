@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Components.Authorization;
 using System.Net.Http.Headers;
 using System.Net.Http;
 using System.Security.Claims;
+using BlazorBattles.Client.Services.Contracts;
+using Microsoft.VisualBasic;
 
 namespace BlazorBattles.Client.Services
 {
@@ -11,11 +13,13 @@ namespace BlazorBattles.Client.Services
     {
         private readonly ILocalStorageService _localStorage;
         private readonly HttpClient _http;
+        private readonly IBananaService _bananaService;
 
-        public CustomAuthStateProvider(ILocalStorageService localStorage, HttpClient http)
+        public CustomAuthStateProvider(ILocalStorageService localStorage, HttpClient http, IBananaService bananaService)
         {
             _localStorage = localStorage;
             _http = http;
+            _bananaService = bananaService;
         }
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
@@ -27,8 +31,21 @@ namespace BlazorBattles.Client.Services
                 return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
             }
 
-            var identity = new ClaimsIdentity(JwtParser.ParseClaimsFromJwt(token), "jwtAuthType");
-            _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var identity = new ClaimsIdentity();
+        
+            try
+            {
+                identity = new ClaimsIdentity(JwtParser.ParseClaimsFromJwt(token), "jwtAuthType");
+                _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Replace("\"",""));
+                await _bananaService.GetBananas();
+            }
+            catch (Exception)
+            {
+
+                await _localStorage.RemoveItemAsync("AuthToken");
+                identity = new ClaimsIdentity();
+            }
+            
 
             var user = new ClaimsPrincipal(identity);
             var state = new AuthenticationState(user);
