@@ -9,7 +9,7 @@ namespace DataAccess.Data.Domain
     public class UserUnit
     {
         public int Id { get; set; }
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         public Unit Unit { get; set; }
         public int UnitId { get; set; }
         public int HitPoints { get; set; }

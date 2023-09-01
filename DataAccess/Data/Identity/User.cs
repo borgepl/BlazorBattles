@@ -17,7 +17,7 @@ namespace DataAccess.Data.Identity
         public bool IsDeleted { get; set; }
         public DateTime DateCreated { get; set; } = DateTime.Now;
 
-    //    public List<UserUnit> Units { get; set; } = new List<UserUnit>();
+        public List<UserUnit> Units { get; set; } = new List<UserUnit>();
     //    public int Battles { get; set; }
     //    public int Victories { get; set; }
     //    public int Defeats { get; set; }

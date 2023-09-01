@@ -20,6 +20,8 @@ namespace DataAccess.Data
 
         public DbSet<Unit> Units { get; set; }
         public DbSet<User> AppUsers { get; set; }
+        public DbSet<UserUnit> UserUnits { get; set; }
+
 
 
 
