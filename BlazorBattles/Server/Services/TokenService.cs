@@ -26,11 +26,14 @@ namespace BlazorBattles.Server.Services
         {
             var signingCreds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
 
-            var claims = GetClaims(user);
+            List<Claim> claims = GetClaims(user);
+
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(claims),
+                Subject = new ClaimsIdentity(claims, ClaimTypes.Authentication, "username",  ClaimTypes.Role),
+                //Subject = new ClaimsIdentity(claims),
+                //Claims = claims,
                 Expires = DateTime.Now.AddDays(7),
                 SigningCredentials = signingCreds,
                 Issuer = _apiSettings.ValidIssuer,
@@ -51,9 +54,10 @@ namespace BlazorBattles.Server.Services
             if (user != null)
             {
 
-                claims.Add(new Claim(ClaimTypes.Name, user.Email));
+                claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id));
+                claims.Add(new Claim(ClaimTypes.Name, user.UserName));
                 claims.Add(new Claim(ClaimTypes.Email, user.Email));
-                claims.Add(new Claim("Id", user.Id));
+                claims.Add(new Claim("username", user.UserName));
 
                 var userFromDb = _userManager.FindByEmailAsync(user.Email).GetAwaiter().GetResult();
                 if (userFromDb != null)

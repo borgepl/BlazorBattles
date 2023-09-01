@@ -2,23 +2,10 @@
 @inject NavigationManager NavManager
 @inject ILocalStorageService LocalStorage
 @inject AuthenticationStateProvider AuthStateProvider
+@inject IAuthService AuthService
+@inject IToastService ToastService
 
 
-   @* <h3>Login</h3>
-
-    <EditForm Model="userVM" OnValidSubmit="HandleLogin">
-        <DataAnnotationsValidator></DataAnnotationsValidator>
-        <div class="row mb-3">
-            <label for="username">Username</label>
-            <InputText id="username" @bind-Value="userVM.Username" class="form-control"></InputText>
-        </div>
-        <div class="row mb-3">
-            <label for="password">Password</label>
-            <InputText id="password" @bind-Value="userVM.Password" class="form-control" type="password"></InputText>
-        </div>
-        <button type="submit" class="btn btn-primary">Login</button>
-        <ValidationSummary />
-    </EditForm>*@
 
        <div class="container-fluid">
             <div class="row d-flex justify-content-center align-items-center h-100">
@@ -86,18 +73,26 @@
 
 
 @code {
-    // bool isAuthenticated = false;
 
     private UserLoginDTO userVM = new UserLoginDTO();
 
     private async void HandleLogin()
     {
-        //Console.WriteLine($"{userVM.Username} // {userVM.Password}");
-        //isAuthenticated = true;
+        var result = await AuthService.Login(userVM);
+        if (result.IsAuthSuccessful)
+        {
 
-        await LocalStorage.SetItemAsync<bool>("IsAuthenticated", true);
-        await AuthStateProvider.GetAuthenticationStateAsync();
-        NavManager.NavigateTo("/");
+            // await LocalStorage.SetItemAsync<bool>("IsAuthenticated", true);
+            await LocalStorage.SetItemAsync<string>("AuthToken", result.Token);
+            await AuthStateProvider.GetAuthenticationStateAsync();
+            NavManager.NavigateTo("/");
+        }
+        else
+        {
+            ToastService.ShowError(result.ErrorMessage);
+        }
+
+        
     }
 
     private void GoToRegister()

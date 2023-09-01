@@ -2,10 +2,23 @@
 @inject IUnitService UnitService
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavManager
+@inject IAuthService AuthService
+@inject IToastService ToastService
 
 <h3>Register</h3>
 
+@if (ShowRegistrationErrors)
+{
+    <div>
+        @foreach (var error in Errors)
+        {
+            <p class="text-danger text-center">@error</p>
+        }
+    </div>
+}
+
 <EditForm Model="userVM" OnValidSubmit="HandleRegistration">
+
     <DataAnnotationsValidator></DataAnnotationsValidator>
     <div class="mb-3">
         <label for="email" class="required">Email</label>
@@ -59,18 +72,41 @@
 
 @code {
     UserRegisterDTO userVM = new UserRegisterDTO();
+    public IEnumerable<string>? Errors { get; set; }
+    public bool IsProcessing { get; set; } = false;
+    public bool ShowRegistrationErrors { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         await UnitService.LoadUnitsAsync();
     }
 
-    void HandleRegistration()
+    async void HandleRegistration()
     {
-        Console.WriteLine("Store this new user in the database!");
-        JSRuntime.InvokeVoidAsync("console.log", "This is the great new user:", userVM);
+        // Console.WriteLine("Store this new user in the database!");
+        // JSRuntime.InvokeVoidAsync("console.log", "This is the great new user:", userVM);
+        ShowRegistrationErrors = false;
+        IsProcessing = true;
 
-        NavManager.NavigateTo("login");
+        var result = await AuthService.Register(userVM);
+        if (result.IsRegisterationSuccessful)
+        {
+            IsProcessing = false;
+            ToastService.ShowSuccess("Registration successfull");
+            NavManager.NavigateTo("login");
+        }
+        else
+        {
+            IsProcessing = false;
+            ToastService.ShowError($"There were errors.");
+            ToastService.ShowError(result.Errors.First());
+            
+            // Errors can be shown then in view
+            Errors = result.Errors;
+            ShowRegistrationErrors = true;
+        }
+
+        
 
     }
 }

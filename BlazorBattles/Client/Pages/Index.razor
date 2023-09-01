@@ -5,7 +5,7 @@
 <AuthorizeView>
     <Authorized>
         <div class="image">
-            <h1 class="text-center text-white">Hi, @context.User.Identity.Name. Welcome Back!</h1>
+            <h1 class="text-center text-white">Hi, @context.User.FindFirst("unique_name").Value. Welcome Back!</h1>
             <img src="images/sword-790815_1280.jpg" width="1100" height="600"/>
         </div>
     </Authorized>

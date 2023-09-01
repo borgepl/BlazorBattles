@@ -37,27 +37,27 @@ namespace BlazorBattles.Server.Extensions
 
             services.AddScoped<ITokenService, TokenService>();
 
-            //services.AddAuthentication(opt =>
-            //{
-            //    opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            //    opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            //    opt.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            //})
-            //    .AddJwtBearer(x =>
-            //    {
-            //        x.RequireHttpsMetadata = false;
-            //        x.SaveToken = true;
-            //        x.TokenValidationParameters = new TokenValidationParameters()
-            //        {
-            //            ValidateIssuerSigningKey = true,
-            //            IssuerSigningKey = new SymmetricSecurityKey(key),
-            //            ValidateAudience = true,
-            //            ValidateIssuer = true,
-            //            ValidAudience = apiSettings.ValidAudience,
-            //            ValidIssuer = apiSettings.ValidIssuer,
-            //            ClockSkew = TimeSpan.Zero
-            //        };
-            //    });
+            services.AddAuthentication(opt =>
+            {
+                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                opt.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer(x =>
+                {
+                    x.RequireHttpsMetadata = false;
+                    x.SaveToken = true;
+                    x.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(key),
+                        ValidateAudience = true,
+                        ValidateIssuer = true,
+                        ValidAudience = apiSettings.ValidAudience,
+                        ValidIssuer = apiSettings.ValidIssuer,
+                        ClockSkew = TimeSpan.Zero
+                    };
+                });
 
             return services;
         }
