@@ -17,6 +17,7 @@ namespace BlazorBattles.Server.Extensions
             });
 
             services.AddScoped<IUnitRepository, UnitRepository>();
+            services.AddScoped<IUserUnitRepository, UserUnitRepository>();
 
             //var appSettingsSection = config.GetSection("APISettings");
             //services.Configure<APISettings>(appSettingsSection);
