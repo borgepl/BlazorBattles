@@ -1,4 +1,6 @@
-﻿using BlazorBattles.Server.Extensions;
+﻿using AutoMapper;
+using BlazorBattles.Models.Dto;
+using BlazorBattles.Server.Extensions;
 using DataAccess.Data.Domain;
 using DataAccess.Data.Identity;
 using Microsoft.AspNetCore.Authorization;
@@ -17,12 +19,15 @@ namespace BlazorBattles.Server.Controllers
         private readonly IUserUnitRepository _userUnitRepository;
         private readonly IUnitRepository _unitRepository;
         private readonly UserManager<User> _userManager;
+        private readonly IMapper _mapper;
 
-        public UserUnitController(IUserUnitRepository userUnitRepository, IUnitRepository unitRepository, UserManager<User> userManager)
+        public UserUnitController(IUserUnitRepository userUnitRepository, IUnitRepository unitRepository, 
+            UserManager<User> userManager, IMapper mapper)
         {
             _userUnitRepository = userUnitRepository;
             _unitRepository = unitRepository;
             _userManager = userManager;
+            _mapper = mapper;
         }
 
         [HttpPost]
@@ -48,6 +53,16 @@ namespace BlazorBattles.Server.Controllers
             await _userUnitRepository.AddAsync(newUserUnit);
 
             return Ok(newUserUnit);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetUserUnits()
+        {
+            var user = await _userManager.FindByIdAsync(User.GetUserId());
+            var userUnits = await _userUnitRepository.GetAllFilteredAsync(u => u.UserId == user.Id);
+
+            var userUnitsToReturn = _mapper.Map<IEnumerable<UserUnitResponseDTO>>(userUnits);
+            return Ok(userUnitsToReturn);
         }
     }
 }

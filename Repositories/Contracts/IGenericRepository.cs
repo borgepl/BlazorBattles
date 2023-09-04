@@ -14,6 +14,8 @@ namespace Repositories.Contracts
 
         Task<IEnumerable<T>> GetAllAsync();
 
+        Task<IEnumerable<T>> GetAllFilteredAsync(Expression<Func<T, bool>> filter, string? includeProperties = null);
+
         Task AddAsync(T entity);
         Task AddRangeAsync(IEnumerable<T> entities);
         Task<bool> Exists(int id);

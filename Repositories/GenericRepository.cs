@@ -54,6 +54,22 @@ namespace Repositories
             return await _dbSet.AsNoTracking().ToListAsync();
         }
 
+        public async Task<IEnumerable<T>> GetAllFilteredAsync(Expression<Func<T, bool>> filter, string? includeProperties = null)
+        {
+            IQueryable<T> query = _dbSet;
+            query = query.Where(filter);
+            if (!string.IsNullOrEmpty(includeProperties))
+            {
+                foreach (var includeProp in includeProperties
+                    .Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(includeProp);
+                }
+            }
+
+            return await query.ToListAsync();
+        }
+
         public async Task<T> GetAsync(int id)
         {
             return await _dbSet.FindAsync(id);

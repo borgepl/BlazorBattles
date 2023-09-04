@@ -1,4 +1,5 @@
-﻿using DataAccess.Data;
+﻿using BlazorBattles.Server.Config;
+using DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Repositories;
 using Repositories.Contracts;
@@ -22,7 +23,7 @@ namespace BlazorBattles.Server.Extensions
             //var appSettingsSection = config.GetSection("APISettings");
             //services.Configure<APISettings>(appSettingsSection);
 
-            //services.AddAutoMapper(typeof(MappingProfile));
+            services.AddAutoMapper(typeof(MapperConfig));
 
             return services;
         }
