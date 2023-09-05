@@ -1,5 +1,7 @@
 ﻿@page "/leaderboard"
 @inject ILeaderboardService LeaderboardService
+@inject AuthenticationStateProvider AuthStateProvider
+@using System.Security.Claims
 
 <h3>Leaderboard</h3>
 
@@ -23,13 +25,18 @@ else
         <tbody>
             @foreach (var entry in LeaderboardService.Leaderboard)
             {
-                <tr>
+                <tr style="@GetMyStyle(entry.UserId!)">
                     <td>@entry.Rank</td>
                     <td>@entry.Username</td>
                     <td>@entry.Victories</td>
                     <td>@entry.Defeats</td>
                     <td>@entry.Battles</td>
-                    <td><button class="btn btn-primary">Fight</button></td>
+                    <td>
+                        @if (entry.UserId != myUserId)
+                        {
+                            <button class="btn btn-primary">Fight</button>
+                        }
+                    </td>
                 </tr>
             }
         </tbody>
@@ -38,8 +45,24 @@ else
 
 
 @code {
+    string? myUserId;
+
     protected override async Task OnInitializedAsync()
     {
         await LeaderboardService.GetLeaderboard();
+
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+
+        //myUserId = "2bd391c3-5785-4ad0-bedb-4bf71ff5d143";
+        //myUserId = authState.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+        myUserId = authState.User.Claims.FirstOrDefault().Value;
+    }
+
+    public string GetMyStyle(string userId)
+    {
+        if (userId == myUserId)
+            return "color: green; font-weight: 600;";
+        else
+            return string.Empty;
     }
 }
