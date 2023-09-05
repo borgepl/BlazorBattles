@@ -18,8 +18,8 @@ namespace DataAccess.Data.Identity
         public DateTime DateCreated { get; set; } = DateTime.Now;
 
         public List<UserUnit> Units { get; set; } = new List<UserUnit>();
-    //    public int Battles { get; set; }
-    //    public int Victories { get; set; }
-    //    public int Defeats { get; set; }
+        public int Battles { get; set; }
+        public int Victories { get; set; }
+        public int Defeats { get; set; }
     }
 }
