@@ -18,11 +18,13 @@ namespace BlazorBattles.Server.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly IUserUnitRepository _userUnitRepository;
+        private readonly IBattleRepository _battleRepository;
 
-        public BattleController(UserManager<User> userManager, IUserUnitRepository userUnitRepository)
+        public BattleController(UserManager<User> userManager, IUserUnitRepository userUnitRepository, IBattleRepository battleRepository)
         {
             _userManager = userManager;
             _userUnitRepository = userUnitRepository;
+            _battleRepository = battleRepository;
         }
         [HttpPost]
         public async Task<IActionResult> StartBattle([FromBody] string opponentId)
@@ -130,9 +132,23 @@ namespace BlazorBattles.Server.Controllers
                 opponent.Bananas += attackerDamageSum;
             }
 
+            await StoreBattleHistoryAsync(attacker, opponent, result);
+
             await _userManager.UpdateAsync(attacker);
             await _userManager.UpdateAsync(opponent);
 
+        }
+
+        private async Task StoreBattleHistoryAsync(User attacker, User opponent, BattleResultDTO result)
+        {
+            var battle = new Battle();
+            battle.Attacker = attacker;
+            battle.Opponent = opponent;
+            battle.RoundsFought = result.RoundsFought;
+            battle.WinnerDamage = result.IsVictory ? result.AttackerDamageSum : result.OpponentDamageSum;
+            battle.Winner = result.IsVictory ? attacker : opponent;
+
+            await _battleRepository.AddAsync(battle);
         }
     }
 }
