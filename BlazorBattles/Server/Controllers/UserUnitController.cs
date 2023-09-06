@@ -30,6 +30,53 @@ namespace BlazorBattles.Server.Controllers
             _mapper = mapper;
         }
 
+        [HttpPost("revive")]
+        public async Task<IActionResult> ReviveArmy()
+        {
+            // Give again Hitpoints randomly to the Units of the User - Cost 1000 bananas
+
+            var user = await _userManager.FindByIdAsync(User.GetUserId());
+            
+            if (user == null)
+            {
+                return NotFound("User not found!");
+            }
+            else
+            {
+                var userUnits = _userUnitRepository.GetAllFilteredAsync(u => u.UserId == user.Id,"Unit");
+
+                int bananaCost = 1000;
+
+                if (user.Bananas < bananaCost)
+                {
+                    return BadRequest($"Not enough bananas! You need {bananaCost} bananas to revive your army.");
+                }
+
+                bool armyAlreadyAlive = true;
+                foreach (var userUnit in userUnits)
+                {
+                    if (unit.HitPoints <= 0)
+                    {
+                        armyAlreadyAlive = false;
+                        userUnit.HitPoints = new Random().Next(0, userUnit.Unit.HitPoints);
+                        await _userUnitRepository.UpdateAsync(userUnit);
+                    }
+                }
+
+                if (armyAlreadyAlive)
+                {
+                    return Ok("Your army is already alive.");
+                }
+
+                user.Bananas -= bananaCost;
+                await _userManager.UpdateAsync(user);
+                
+
+                return Ok("Army revived!");
+
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> BuildUserUnit([FromBody] int unitId)
         {
