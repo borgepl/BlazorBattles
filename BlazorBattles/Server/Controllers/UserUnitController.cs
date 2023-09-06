@@ -43,7 +43,8 @@ namespace BlazorBattles.Server.Controllers
             }
             else
             {
-                var userUnits = _userUnitRepository.GetAllFilteredAsync(u => u.UserId == user.Id,"Unit");
+                List<UserUnit> userUnits = 
+                    (List<UserUnit>) await _userUnitRepository.GetAllFilteredAsync(u => u.UserId == user.Id,"Unit");
 
                 int bananaCost = 1000;
 
@@ -55,7 +56,7 @@ namespace BlazorBattles.Server.Controllers
                 bool armyAlreadyAlive = true;
                 foreach (var userUnit in userUnits)
                 {
-                    if (unit.HitPoints <= 0)
+                    if (userUnit.HitPoints <= 0)
                     {
                         armyAlreadyAlive = false;
                         userUnit.HitPoints = new Random().Next(0, userUnit.Unit.HitPoints);
