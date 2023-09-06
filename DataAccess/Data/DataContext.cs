@@ -18,12 +18,33 @@ namespace DataAccess.Data
             
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Battle>()
+                .HasOne(b => b.Attacker) // each battle has on attacker
+                .WithMany() // each attacker has many battles.
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Battle>()
+                .HasOne(b => b.Opponent)
+                .WithMany()
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Battle>()
+                .HasOne(b => b.Winner)
+                .WithMany()
+                .OnDelete(DeleteBehavior.NoAction);
+
+            base.OnModelCreating(modelBuilder);
+        }
+
         public DbSet<Unit> Units { get; set; }
         public DbSet<User> AppUsers { get; set; }
         public DbSet<UserUnit> UserUnits { get; set; }
+        public DbSet<Battle> Battles { get; set; }
 
 
-
+        
 
     }
 }
