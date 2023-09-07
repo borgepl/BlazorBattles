@@ -14,6 +14,14 @@ namespace BlazorBattles.Client.Services
         }
 
         public BattleResultDTO LastBattle { get; set; } = new BattleResultDTO();
+        public IList<BattleHistoryDTO> BattleHistory { get; set; } = new List<BattleHistoryDTO>();
+
+        public async Task<IList<BattleHistoryDTO>> GetBattleHistory()
+        {
+            BattleHistory = await _http.GetFromJsonAsync<BattleHistoryDTO[]>("api/battle/history");
+      
+            return BattleHistory;
+        }
 
         public async Task<BattleResultDTO> StartBattle(string opponentId)
         {
