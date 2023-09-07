@@ -1,9 +1,11 @@
 ﻿using BlazorBattles.Models.Dto.Auth;
 using BlazorBattles.Server.Services.Contracts;
+using DataAccess.Data.Domain;
 using DataAccess.Data.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Repositories.Contracts;
 
 namespace BlazorBattles.Server.Controllers
 {
@@ -16,14 +18,20 @@ namespace BlazorBattles.Server.Controllers
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ITokenService _tokenService;
+        private readonly IUnitRepository _unitRepository;
+        private readonly IUserUnitRepository _userUnitRepository;
 
         public AuthController(SignInManager<User> signInManager,
             UserManager<User> userManager,
             RoleManager<IdentityRole> roleManager,
-            ITokenService tokenService)
+            ITokenService tokenService,
+            IUnitRepository unitRepository,
+            IUserUnitRepository userUnitRepository)
         {
             _roleManager = roleManager;
             _tokenService = tokenService;
+            _unitRepository = unitRepository;
+            _userUnitRepository = userUnitRepository;
             _userManager = userManager;
             _signInManager = signInManager;
             
@@ -52,6 +60,7 @@ namespace BlazorBattles.Server.Controllers
 
             var result = await _userManager.CreateAsync(user, request.Password);
 
+
             if (!result.Succeeded)
             {
                 var errors = result.Errors.Select(e => e.Description);
@@ -68,12 +77,24 @@ namespace BlazorBattles.Server.Controllers
             //}
 
             var userInDb = await _userManager.FindByEmailAsync(request.Email);
+
+
             if (userInDb != null)
             {
+                
+                await AddStartingUnit(userInDb, request.StartUnitId);
+
                 return Ok(new RegistrationResponseDTO { Data = userInDb.Id, IsRegisterationSuccessful = true});
             }
             
             return StatusCode(201);
+        }
+
+        private async Task AddStartingUnit(User userInDb, int startUnitId)
+        {
+            var unit = await _unitRepository.GetAsync(startUnitId);
+            var firstUserUnit = new UserUnit { UnitId = unit.Id, UserId = userInDb.Id, HitPoints = unit.HitPoints};
+            await _userUnitRepository.AddAsync(firstUserUnit);
         }
 
         [HttpPost]
