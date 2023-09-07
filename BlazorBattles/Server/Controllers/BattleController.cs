@@ -42,6 +42,29 @@ namespace BlazorBattles.Server.Controllers
             return Ok(result);
         }
 
+        [HttpGet("history")]
+        public async Task<IActionResult> GetHistory()
+        {
+            var user = await _userManager.FindByIdAsync(User.GetUserId());
+            var battles = await _battleRepository
+                .GetAllFilteredAsync(battle => battle.AttackerId == user.Id || battle.OpponentId == user.Id,
+                "Attacker,Opponent,Winner");
+
+            var history = battles.Select(battle => new BattleHistoryDTO
+            {
+                BattleId = battle.Id,
+                AttackerId = battle.AttackerId,
+                OpponentId = battle.OpponentId,
+                YouWon = battle.WinnerId == user.Id,
+                AttackerName = battle.Attacker.UserName,
+                OpponentName = battle.Opponent.UserName,
+                RoundsFought = battle.RoundsFought,
+                WinnerDamageDealt = battle.WinnerDamage,
+                BattleDate = battle.BattleDate
+            });
+            return Ok(history.OrderByDescending(h => h.BattleDate));
+        }
+
         private async Task Fight(User? attacker, User opponent, BattleResultDTO result)
         {
             if (attacker != null)
