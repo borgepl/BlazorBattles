@@ -23,7 +23,8 @@ namespace BlazorBattles.Client.Extensions
             services.AddOptions();
             services.AddAuthorizationCore();
 
-            services.AddScoped<ILeaderboardService, LeaderboardService>();  
+            services.AddScoped<ILeaderboardService, LeaderboardService>();
+            services.AddScoped<IBattleService, BattleService>();
 
             return services;
         }
