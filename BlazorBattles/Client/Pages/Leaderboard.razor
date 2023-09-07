@@ -4,6 +4,7 @@
 @inject IToastService ToastService
 @inject IBattleService BattleService
 @inject IBananaService BananaService
+@inject NavigationManager NavManager
 
 @using System.Security.Claims
 
@@ -83,5 +84,10 @@ else
 
         await LeaderboardService.GetLeaderboard();
         await BananaService.GetBananas();
+
+        if (result.RoundsFought > 0)
+        {
+            NavManager.NavigateTo("battlelog");
+        }
     }
 }
