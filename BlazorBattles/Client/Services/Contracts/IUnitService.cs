@@ -11,5 +11,6 @@ namespace BlazorBattles.Client.Services.Contracts
         Task LoadUserUnitsAsync();
 
         Task ReviveArmy();
+        int CountTotalHitPoints();
     }
 }

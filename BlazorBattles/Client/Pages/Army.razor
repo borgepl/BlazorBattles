@@ -5,6 +5,41 @@
 
 @if(UnitService.Units.Count > 0)
 {
+<div class="row">
+        <div class="col-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h1 class="card-title text-success">@UnitService.MyUnits.Count(u => u.UnitId == 1)</h1>
+                    <p class="card-text">Nbr. of Knights</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h1 class="card-title text-warning">@UnitService.MyUnits.Count(u => u.UnitId == 2)</h1>
+                    <p class="card-text">Nbr. of Archers</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h1 class="card-title text-danger">@UnitService.MyUnits.Count(u => u.UnitId == 3)</h1>
+                    <p class="card-text">Nbr. of Mages</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h1 class="card-title text-info">@UnitService.CountTotalHitPoints()</h1>
+                    <p class="card-text">Total HitPoints</p>
+                </div>
+            </div>
+        </div>
+</div>
+
 <table class="table">
     @foreach (var userUnit in UnitService.MyUnits)
     {

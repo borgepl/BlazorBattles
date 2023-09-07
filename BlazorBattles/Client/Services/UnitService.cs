@@ -73,5 +73,15 @@ namespace BlazorBattles.Client.Services
             await LoadUserUnitsAsync();
             await _bananaService.GetBananas();
         }
+
+        public int CountTotalHitPoints()
+        {
+            int total = 0;
+            foreach (var unit in MyUnits)
+            {
+                total += unit.HitPoints;
+            }
+            return total;
+        }
     }
 }
